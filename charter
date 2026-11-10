@@ -6,7 +6,17 @@
 2. Response time to communication expectations
 
 3. Definition of done: when is a task complete? (hint: "I'm done with that but I didn't check it in to github" is not done.)
-  
+
+Defention of completed work(done) : 
+Code is Written, Tested, and Committed: All code for the task is written, unit tests have been created and successfully passed, and the changes are committed and pushed to the main or feature branch on GitHub.
+
+Code Review Approved: The pull request has been reviewed by the assigned memeber's of the team, commented on,and any requested changes have been addressed by the team
+
+Merged without Conflicts: The branch has been successfully merged into the integration/main branch with no merge conflicts or build failures due to the newly merged work 
+
+Documentation : Any relevant code comments, API documentation, or task boards (like Trello, Jira, or GitHub Projects) are fully updated to reflect the current state of the process.
+
+
 4. Scrum meeting format/frequency and distribution of documentation tasks (meeting minutes, updating task board)
 
 5. Procedure for adopting policies (e.g. code style, code check-in steps, documentation updates)
