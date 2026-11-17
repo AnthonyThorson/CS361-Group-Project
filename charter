@@ -71,9 +71,26 @@ Roles will be assigned at our next lab meeting, and this section will be updated
 
 5. Procedure for adopting policies (e.g. code style, code check-in steps, documentation updates)
 if you adopt such a policy during the initial meeting, put it here
+proposal:Any team member can propose a new policy or a modification to an existing policy by bringing it up during the weekly meeting 
+
+Discussion & Review : the team will discuss the proposal during the weekly meeting,evaluting its impact on workflow,code quality,and documentation standards
+
+consensus:A policy is officaly adopted and regonzied my the group if it recieved the majority votes from all active members during the weekly meeting
+
+Document update:Once adopted,the board keeper or designeted note taker will update this charter witith 24 hours to reflect the newely established policy 
 
 6. Procedure for handling a member who is not meeting expectations
 must include at least 3 actions before involving the instructor
+If a team member consistently misses deadlines, fails to communicate within the 24-hour window, or does not meet the "Definition of Done," the team will follow these progressive steps before involving the course instructor:
+
+Informal direct check in: A team meber will reach out to the team meber and try to identify and potential blocker or personal challenges,and try to help them stay on track 
+
+Team Dicussion and support plan:if the behavior continues or does not improve after the informal check in then we would have a group discussion and discuss a action plan that is manageable with all group members involved
+
+Formal Team Warning: If the action plan is ignored or milestones are missed without communication, a formal team warning will be issued outlining the specific areas of concern and emphasizing the necessity of their contribution to the project's success.
+
+Instructor Consultation: If the member fails to respond or adjust after the formal team warning has been issued, the team will consult the course instructor for guidance and intervention.
+
 
 7. Signatures: each member must sign their name by typing their name at the bottom of the document.
 
