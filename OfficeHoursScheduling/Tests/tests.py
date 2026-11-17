@@ -1,18 +1,19 @@
-Scenario: Student books an available slot
+from django.contrib.auth import get_user_model
+from django.contrib.messages import get_messages
+from django.test import TestCase
 
-When a student views a professor's available office hourse
-And they select a sliot
-And confirm the booking
-Then they should recieve a confirmation message that says it was booked
-And said slot should show as booked for other students
-And they should recieve a confirmation email with the date, time and office location (or link to online meeting)
-And the professor should recieve an email, notifying them of the new appointment, also with the date, time, and whether it is in person or online (if it is online, it includes the link as well)
+class StudentBooksAvailableSlotTests(OfficeHourTestBase):
+    def test_student_receives_booking_confirmation_message(self):
+        response = self.book_slot()
 
+        messages = [str(m) for m in get_messages(response.wsgi_request)]
+        self.assertTrue(any('booked' in m.lower() for m in messages))
 
-Scenario: Student cancels a booking
+    def test_slot_shows_as_booked_for_other_students(self):
+        self.book_slot()
 
-Given a student has booked a slot
-When they cancel the appointment
-Then they should be informed that it's been cancelled
-And the slot should become available
-And the professor should be notified of the cancellation
+        self.login_as(self.other_student)
+        response = self.client.get(
+            reverse('scheduling:professor_slots', args=[self.professor.pk])
+        )
+        self.assertNotIn(self.slot, response.context['available_slots'])
