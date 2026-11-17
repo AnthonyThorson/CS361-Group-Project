@@ -86,5 +86,57 @@ class ClassLookupTests(TestCase):
     def test_class_lookup_invalid_class(self):
         response = self.client.get('/classes/', {'course': 'INVALID123'})
 
+"""
+Anthony's tests ->
+"""
+from django.contrib.auth import SESSION_KEY, get_user_model
+
+class LoginAccessAcceptanceTests(TestCase):
+    def test_anonymous_student_meetings_request_redirects_to_login(self):
+        """B01 AC4 / P21 -> P01.
+
+        Given I am not logged in,
+        when I try to view office-hour meeting information,
+        then I am redirected to login before that information is shown.
+        """
+        response = self.client.get("/meetings/")
+
+        self.assertRedirects(
+            response,
+            "/login/?next=/meetings/",
+            status_code=302,
+            target_status_code=200,
+        )
+        self.assertNotIn(SESSION_KEY, self.client.session)
+
+    def test_unknown_email_shows_login_error_and_does_not_log_in(self):
+        """B01 AC3 / P01.
+
+        Given no account exists for an email,
+        when I submit that email and a password to login,
+        then I see the generic login error and remain logged out.
+        """
+        email = "unregistered.student@example.test"
+        self.assertFalse(get_user_model().objects.filter(email=email).exists())
+
+        response = self.client.post(
+            "/login/",
+            {"email": email, "password": "NotARealAccountPassword42!"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Incorrect email or password")
+        self.assertIsNotNone(response.context)
+        self.assertIn(
+            "Incorrect email or password",
+            " ".join(response.context["form_errors"]["__all__"]),
+        )
+        self.assertEqual(response.context["email_value"], email)
+        self.assertIsNone(response.context["viewer"])
+        self.assertNotIn(SESSION_KEY, self.client.session)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Class not found')
+    
+    """
+    End of my tests
+    """
