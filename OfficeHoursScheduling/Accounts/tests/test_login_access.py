@@ -1,5 +1,6 @@
+from django.contrib.auth import SESSION_KEY, authenticate, get_user_model
 from django.test import TestCase
-from django.contrib.auth import authenticate, get_user_model
+from django.urls import reverse
 
 
 class AccountUserTests(TestCase):
@@ -24,18 +25,12 @@ class AccountUserTests(TestCase):
         self.assertTrue(self.user.check_password(self.password))
 
     def test_authenticate_with_email_and_password(self):
-        authenticated_user = authenticate(
-            email=self.email,
-            password=self.password,
-        )
+        authenticated_user = authenticate(email=self.email, password=self.password)
 
         self.assertEqual(authenticated_user, self.user)
 
     def test_authentication_rejects_wrong_password(self):
-        authenticated_user = authenticate(
-            email=self.email,
-            password="wrong-password",
-        )
+        authenticated_user = authenticate(email=self.email, password="wrong-password")
 
         self.assertIsNone(authenticated_user)
 
@@ -91,3 +86,96 @@ class AccountUserTests(TestCase):
                 password=self.password,
                 is_superuser=False,
             )
+
+
+class LoginViewTests(TestCase):
+    def setUp(self):
+        self.email = "login@example.com"
+        self.password = "test-password-123"
+        self.user = get_user_model().objects.create_user(
+            email=self.email,
+            password=self.password,
+        )
+        self.login_url = reverse("accounts:login")
+
+    def test_login_page_displays_email_and_password_fields(self):
+        response = self.client.get(self.login_url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'name="email"')
+        self.assertContains(response, 'name="password"')
+
+    def test_valid_credentials_log_user_in(self):
+        response = self.client.post(
+            self.login_url,
+            {"email": self.email, "password": self.password, "next": "/admin/"},
+        )
+
+        self.assertRedirects(response, "/admin/", fetch_redirect_response=False)
+        self.assertEqual(str(self.client.session[SESSION_KEY]), str(self.user.pk))
+
+    def test_invalid_credentials_show_generic_error(self):
+        response = self.client.post(
+            self.login_url,
+            {"email": self.email, "password": "incorrect-password"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assert_login_error_beneath_form(
+            response,
+            "Incorrect email or password.",
+        )
+        self.assertNotIn(SESSION_KEY, self.client.session)
+
+    def test_invalid_email_does_not_authenticate(self):
+        response = self.client.post(
+            self.login_url,
+            {"email": "not-an-email", "password": self.password},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assert_login_error_beneath_form(
+            response,
+            "Enter a valid email address.",
+        )
+        self.assertNotIn(SESSION_KEY, self.client.session)
+
+    def test_inactive_account_cannot_log_in(self):
+        self.user.is_active = False
+        self.user.save(update_fields=["is_active"])
+
+        response = self.client.post(
+            self.login_url,
+            {"email": self.email, "password": self.password},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assert_login_error_beneath_form(
+            response,
+            "Incorrect email or password.",
+        )
+        self.assertNotIn(SESSION_KEY, self.client.session)
+
+    def test_external_redirect_target_is_rejected(self):
+        response = self.client.post(
+            self.login_url,
+            {
+                "email": self.email,
+                "password": self.password,
+                "next": "https://example.org/",
+            },
+        )
+
+        self.assertRedirects(
+            response,
+            "/accounts/profile/",
+            fetch_redirect_response=False,
+        )
+
+    def assert_login_error_beneath_form(self, response, message):
+        content = response.content.decode()
+        form_end = content.index("</form>")
+        error_start = content.index('<div class="login-errors" role="alert">')
+
+        self.assertGreater(error_start, form_end)
+        self.assertIn(message, content[error_start:])
