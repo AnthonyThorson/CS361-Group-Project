@@ -5,3 +5,4 @@ from django.contrib import admin
 from .models import Availability, Enrollment, OfficeHour, Reservation, StaffAssignment
 
 admin.site.register([Availability, Enrollment, OfficeHour, Reservation, StaffAssignment])
+# Register your models here.

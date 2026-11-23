@@ -100,3 +100,6 @@ class Reservation(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["office_hour", "student"], name="unique_office_hour_student")]
+from django.db import models
+
+# Create your models here.

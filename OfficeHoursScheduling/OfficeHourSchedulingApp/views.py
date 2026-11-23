@@ -118,3 +118,6 @@ class CourseDeleteView(AdministratorRequiredMixin, View):
             return render(request, "courses/delete.html", {"course": course, "error": "The course could not be deleted. Please try again."})
         messages.success(request, f"Course {course.course_number} was deleted successfully.")
         return redirect("courses:list")
+from django.shortcuts import render
+
+# Create your views here.
