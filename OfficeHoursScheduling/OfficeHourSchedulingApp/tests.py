@@ -377,7 +377,7 @@ class CourseWorkflowTests(TestCase):
         for url in (self.create_url, self.list_url, reverse("courses:detail", args=[course.pk]), reverse("courses:delete", args=[course.pk])):
             for method in (self.client.get, self.client.post):
                 with self.subTest(url=url, method=method.__name__):
-                    data = self.payload() | {"confirm": "yes"}
+                    data = {} if method.__name__ == "get" else self.payload() | {"confirm": "yes"}
                     self.assertRedirects(method(url, data), f"{reverse('login')}?next={url}")
         self.assertEqual(self.record_snapshot(), before)
 
