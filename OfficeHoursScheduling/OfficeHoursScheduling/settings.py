@@ -38,7 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'OfficeHourSchedulingApp',
+    'Accounts',
 ]
+
+AUTH_USER_MODEL = 'Accounts.AccountUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
